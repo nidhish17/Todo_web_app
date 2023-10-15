@@ -1,0 +1,67 @@
+{% extends "todo/base.html" %}
+{% load static %}
+
+{% block content %}
+    <section id="edit">
+
+        <div class="container mt-4">
+
+            {% include 'todo/header.html' %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <label for="{{ title.id }}" class="form-label">{{ edit_form.title.label }}</label>
+                <div>
+                    {{ edit_form.title }}<br>
+                </div>
+                <br>
+
+                <label for="{{ form.task_description.id }}"
+                       class="form-label">{{ edit_form.task_description.label }}</label>
+                <div class="card border-info">
+                    {{ edit_form.media }}
+                    {{ edit_form.task_description }}
+                </div>
+                <br>
+
+                <label for="{{ start_date.id }}" class="form-label">{{ edit_form.start_date.label }}</label>
+                <div>
+                    {{ edit_form.start_date }}<br>
+                </div>
+
+                <label for="{{ due_date.id }}" class="form-label">{{ edit_form.due_date.label }}</label>
+                <div>
+                    {{ edit_form.due_date }}<br>
+                </div>
+
+
+
+                <div class="row ">
+                    <div class="col d-grid">
+                        <button class="btn btn-dark border-secondary card" type="submit">Update</button>
+                    </div>
+                    <div class="col d-grid">
+                        <button class="btn btn-dark card border-secondary" type="submit" href="{% url 'homepage' %}?sort={{ request.GET.sort }}">
+                            Home
+                        </button>
+                    </div>
+                </div>
+
+
+            </form>
+            <br>
+
+
+
+
+
+        </div>
+    </section>
+
+    {% include 'todo/sidebar.html' %}
+    <script src="{% static "todo/main.js" %}"></script>
+
+{% endblock %}
+
+

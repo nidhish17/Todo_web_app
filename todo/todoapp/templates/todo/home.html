@@ -1,0 +1,305 @@
+{% extends "todo/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+    <section id="task-form">
+
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field_name, field_errors in form.errors.items %}
+                        {% for error in field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="container mt-4">
+
+            {% include 'todo/header.html' %}
+            <br>
+
+            {{ form.media }}
+            <form action="{% url 'add_tasks' %}?sort={{ request.GET.sort }}" method="post">
+                {% csrf_token %}
+
+
+                <label for="{{ title.id }}" class="form-label text-info">{{ form.title.label }}</label>
+                <div>
+                    {{ form.title }}<br>
+                </div>
+                <br>
+
+                <label for="{{ form.task_description.id }}"
+                       class="form-label text-info">{{ form.task_description.label }}</label>
+                <div class="card border-info">
+                    {{ form.task_description }}
+                </div>
+                <br>
+
+                <label for="{{ form.start_date.id }}" class="form-label text-info">{{ form.start_date.label }}</label>
+                <div class="card border-info">
+                    {{ form.start_date }}
+                </div>
+                <br>
+
+                <label for="{{ form.due_date.id }}" class="form-label text-info">{{ form.due_date.label }}</label>
+                <div class="card border-info">
+                    {{ form.due_date }}
+                </div>
+                <br>
+
+                <div class="d-grid card border-secondary">
+                    <button class="btn btn-dark" type="submit">Add TODO</button>
+                </div>
+
+            </form>
+        </div>
+
+    </section>
+
+
+    {% if user.is_authenticated and todo %}
+        <section id="display-tasks" class="mt-5">
+
+            <div class="container">
+
+
+                <div id="filter" class="d-flex justify-content-between">
+
+
+                    <div class="input-group container">
+                        {#                    <h3 class="random-quote form-control">some random quote here </h3>#}
+                        {#                    <a class="btn btn-secondary fetch-quote" onclick="getapi(api_url)"><i class="bi bi-arrow-clockwise"></i></a>#}
+                        <input class="form-control me-2 search-bar" type="search" placeholder="Search By Title" aria-label="Search">
+                    </div>
+
+
+                    <div class="dropdown">
+                        <button class="btn btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="bi bi-list-nested"></i> Filters
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item filter-item" href="{% url 'homepage' %}">Clear</a></li>
+                            <li><a class="dropdown-item filter-item" href="{% url 'homepage' %}?sort=by_priority">By
+                                Highest
+                                Priority</a></li>
+                            <li><a class="dropdown-item filter-item" href="{% url 'homepage' %}?sort=by_date">Date
+                                Created</a></li>
+                            <li><a class="dropdown-item filter-item" href="{% url 'homepage' %}?sort=recent">Latest</a>
+                            </li>
+                            <li><a class="dropdown-item filter-item" href="{% url 'homepage' %}?sort=due_date">Due
+                                Date</a></li>
+                            <li><a class="dropdown-item filter-item" href="{% url 'homepage' %}?sort=task_completed">Tasks
+                                Done</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <br>
+
+                <table class="table mb-3 table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="text-center col-md d-none d-md-table-cell">Date Created</th>
+                        <th scope="col" class="text-center">ToDo</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-center">Priority</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+
+
+                    <tbody>
+                    {% for task in todo %}
+
+                        <tr class="{% cycle 'table-primary' 'table-dark' %}">
+                            <th class="pt-3 text-center col-md d-none d-md-table-cell"
+                                scope="row">{{ task.start_date }}</th>
+                            <td class="pt-3 text-center task-title">{{ task.title | truncate_with_ellipsis:8 }} <a
+                                    type="button"><i
+                                    class="bi bi-text-left text-warning"
+                                    data-bs-target="#descriptionModal{{ task.id }}" data-bs-toggle="modal"></i></a>
+                            <span class="task-title-hidden" style="display: none;">{{ task.title }}</span>
+                            </td>
+
+
+                            {% if task.task_status %}
+                                <td class="pt-3 text-center done"><s>Done</s></td>
+                            {% else %}
+                                {% if task.due_date != None %}
+                                    {% calculate_due task.due_date as due_status %}
+                                    {% if due_status.0 == 1 %}
+                                        <td class="pt-3 text-center progressing"><span
+                                                class="text-bg-danger p-1 rounded-5 " data-bs-toggle="tooltip"
+                                                data-bs-placement="top" data-bs-title="Days : {{ due_status.1.days }}">DUE</span>
+                                        </td>
+                                    {% elif due_status.0 == 2 %}
+                                        <td class="pt-3 text-center progressing"><span
+                                                class="text-bg-warning p-1 rounded-5" data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                data-bs-title="Days Left: {{ due_status.1.days }}">TODAY</span></td>
+                                    {% else %}
+                                        <td class="pt-3 text-center progressing"><span
+                                                class="text-bg-secondary p-1 rounded-5" data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                data-bs-title="Days Left: {{ due_status.1.days }}">ON TIME</span></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td class="pt-3 text-center progressing">In Progress...</td>
+                                {% endif %}
+                            {% endif %}
+
+                            <td class="text-center pt-3">
+
+                                {# priority_ids contain just the ids which priorities have been set #}
+
+                                {% if task.id in priority_ids %}
+                                    {% for priority in priority_model %}
+                                        {% if priority.todo_id == task.id %}
+                                            {% if priority.priority == 5 %}
+                                                <div class=""><a class="text-decoration-none" type="button"
+                                                                 data-bs-target="#descriptionModal{{ task.id }}"
+                                                                 data-bs-toggle="modal">⭐</a></div>
+                                            {% elif priority.priority == 4 %}
+                                                <div class=""><a class="text-decoration-none" type="button"
+                                                                 data-bs-target="#descriptionModal{{ task.id }}"
+                                                                 data-bs-toggle="modal">⭐⭐</a></div>
+                                            {% elif priority.priority == 3 %}
+                                                <div class=""><a class="text-decoration-none" type="button"
+                                                                 data-bs-target="#descriptionModal{{ task.id }}"
+                                                                 data-bs-toggle="modal">⭐⭐⭐</a></div>
+                                            {% elif priority.priority == 2 %}
+                                                <div class=""><a class="text-decoration-none" type="button"
+                                                                 data-bs-target="#descriptionModal{{ task.id }}"
+                                                                 data-bs-toggle="modal">⭐⭐⭐⭐</a></div>
+                                            {% elif priority.priority == 1 %}
+                                                <div class=""><a class="text-decoration-none" type="button"
+                                                                 data-bs-target="#descriptionModal{{ task.id }}"
+                                                                 data-bs-toggle="modal" style="color: #D14D72"><i
+                                                        class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i
+                                                        class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i
+                                                        class="bi bi-star-fill"></i></a></div>
+                                            {% elif priority.priority == None %}
+                                                <a type="button"><i
+                                                        class="bi bi-gear text-light"
+                                                        data-bs-target="#descriptionModal{{ task.id }}"
+                                                        data-bs-toggle="modal"></i></a>
+
+
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                {% else %}
+                                    <a type="button"><i
+                                            class="bi bi-gear text-light"
+                                            data-bs-target="#descriptionModal{{ task.id }}" data-bs-toggle="modal"></i></a>
+
+                                {% endif %}
+
+
+                            </td>
+
+
+                            <td class="text-center">
+                                {% if task.task_status %}
+                                    <a href="{% url 'update_task_status' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-success d-none d-md-inline-block"><i
+                                            class="bi bi-check-circle-fill"></i></a>
+                                    <a href="{% url 'update_task_status' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-success btn-sm p-1 d-md-none"><i
+                                            class="bi bi-check-circle-fill"></i></a>
+
+                                    <a href="{% url 'edit_task' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-warning d-none d-md-inline-block"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                    <a href="{% url 'edit_task' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-warning btn-sm p-1 d-md-none"><i
+                                            class="bi bi-pencil-square"></i></a>
+
+                                    <a href="#" type="button" class="btn btn-danger d-none d-md-inline-block"
+                                       data-bs-target="#deleteModal{{ task.id }}" data-bs-toggle="modal"><i
+                                            class="bi bi-trash3"></i></a>
+                                    <a href="#" type="button" class="btn btn-danger btn-sm p-1 d-md-none"
+                                       data-bs-target="#deleteModal{{ task.id }}" data-bs-toggle="modal"><i
+                                            class="bi bi-trash3"></i></a>
+                                {% else %}
+                                    <a href="{% url 'update_task_status' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-outline-success d-none d-md-inline-block"><i
+                                            class="bi bi-check-circle"></i></a>
+                                    <a href="{% url 'update_task_status' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-outline-success btn-sm p-1 d-md-none"><i
+                                            class="bi bi-check-circle"></i></a>
+
+                                    <a href="{% url 'edit_task' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-outline-warning d-none d-md-inline-block"><i
+                                            class="bi bi-pencil-square"></i></a>
+                                    <a href="{% url 'edit_task' task.id %}?sort={{ request.GET.sort }}"
+                                       class="btn btn-outline-warning btn-sm p-1 d-md-none"><i
+                                            class="bi bi-pencil-square"></i></a>
+
+                                    <a href="#" type="button"
+                                       class="btn btn-outline-danger d-none d-md-inline-block"
+                                       data-bs-target="#deleteModal{{ task.id }}"
+                                       data-bs-toggle="modal"><i class="bi bi-trash3"></i></a>
+
+                                    <a href="#" type="button"
+                                       class="btn btn-outline-danger btn-sm p-1 d-md-none"
+                                       data-bs-target="#deleteModal{{ task.id }}"
+                                       data-bs-toggle="modal"><i class="bi bi-trash3"></i></a>
+
+
+
+                                {% endif %}
+
+                            </td>
+
+
+                        </tr>
+
+
+
+
+
+
+                        {#                        Bootstrap modal#}
+                        {% include "todo/modal.html" %}
+
+
+
+                    {% endfor %}
+
+
+
+
+                    {#{% include "todo/modal.html" %}#}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </section>
+    {% endif %}
+
+
+    {% include "todo/sidebar.html" %}
+    <script src="{% static 'todo/main.js' %}"></script>
+
+
+
+{% endblock %}
+
+
+
+
+
+

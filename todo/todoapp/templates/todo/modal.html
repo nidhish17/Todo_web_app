@@ -1,0 +1,115 @@
+<div class="modal fade modal-xl" id="deleteModal{{ task.id }}" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete: {{ task.title }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ task.task_description | safe }}
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <div><span>{{ task.start_date }}</span></div>
+                {% if task.due_date %}
+                <div><span class="text-danger">DUE: {{ task.due_date }}</span></div>
+                {% endif %}
+                <div class="pt-3">
+                    {% if task.task_status %}
+                        <p>Task Status: <span class="text-success">Done</span></p>
+                    {% else %}
+                        <p>Task Status: <span class="text-danger">InProgress</span></p>
+                    {% endif %}
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary me-1" data-bs-dismiss="modal">Close
+                    </button>
+                    <a href="{% url 'delete_task' task.id %}?sort={{ request.GET.sort }}" type="button"
+                       class="btn btn-danger ">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-xl" id="descriptionModal{{ task.id }}" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ task.title }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ task.task_description | safe }}
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <div><span>{{ task.start_date }}</span></div>
+                {% if task.due_date %}
+                <div><span class="text-danger">DUE: {{ task.due_date }}</span></div>
+                {% endif %}
+                <div class="pt-3">
+                    {% if task.task_status %}
+                        <p>Task Status: <span class="text-success">Done</span></p>
+                    {% else %}
+                        <p>Task Status: <span class="text-danger">InProgress</span></p>
+                    {% endif %}
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary me-1" data-bs-dismiss="modal">Close
+                    </button>
+                    {% if task.task_status %}
+                        <a href="{% url 'delete_task' task.id %}?sort={{ request.GET.sort }}" type="button"
+                           class="btn btn-danger ">Delete</a>
+                    {% else %}
+                        <a href="{% url 'update_task_status' task.id %}?sort={{ request.GET.sort }}" type="button"
+                           class="btn btn-success ">Mark as Done</a>
+                    {% endif %}
+                <a href="{% url 'edit_task' task.id %}?sort={{ request.GET.sort }}" type="button"
+                           class="btn btn-warning ms-1">Edit <i class="bi bi-pencil"></i></a>
+                </div>
+                <br>
+                <form action="{% url 'set_priority' task.id %}?sort={{ request.GET.sort }}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group text-center">
+
+                        <div class="card border-warning input-group">
+                            <div class="input-group">
+                                <select class="form-select" name="priority"
+                                        aria-label="Example select with button addon">
+                                    {% for value, star in priority_form.fields.priority.choices %}
+                                        <option value="{{ value }}">{{ star }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-outline-warning" type="submit">
+                                    Set Priority✓
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

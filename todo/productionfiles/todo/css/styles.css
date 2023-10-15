@@ -1,0 +1,59 @@
+/* Change Background Color of the Calendar */
+.datepicker {
+    background-color: whitesmoke;
+}
+
+/* Change Text Color of the Calendar */
+.datepicker {
+    color: black;
+}
+
+/* Change Header Background Color of the Days View */
+.datepicker .datepicker-days th {
+    background-color: white;
+}
+
+/* Change Background Color of the Selected Date */
+.datepicker .datepicker-days .active {
+    background-color: #0d6efd;
+}
+
+/* Change Border Color of the Calendar */
+.datepicker {
+    border-color: black;
+}
+
+/* Change Background Color of Navigation Buttons */
+.datepicker .datepicker-controls .btn {
+    background-color: black;
+}
+
+/* Change Text Color of Navigation Buttons on Hover */
+.datepicker .datepicker-controls .btn:hover {
+    color: black;
+}
+
+
+.bootstrap-datetimepicker-widget .glyphicon {
+    color: #ff0000; /* Replace with your desired color */
+}
+
+
+.bi-record-circle {
+    color: black;
+}
+
+
+.bi-trash{
+    color: black;
+}
+
+.bi-x-lg{
+    color:black;
+}
+
+.bi-clock{
+    color:black;
+}
+
+
