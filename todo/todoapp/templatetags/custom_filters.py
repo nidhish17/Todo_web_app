@@ -21,16 +21,12 @@ def calculate_due(context, due_date):
 
     time_diff = due_date - today_date.date()
 
-    print(time_diff)
 
     if time_diff.total_seconds() < 0:
-        print("POST DUE")
         return [1, time_diff]
     elif time_diff.total_seconds() == 0:
-        print("DUE TODAY")
         return [2, time_diff]
     else:
-        print("ON TIME")
         return [0, time_diff]
 
 
