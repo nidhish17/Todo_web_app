@@ -1,8 +1,8 @@
 # Todo_web_app
 
-https://productive-pro.onrender.com/
+https://productive-pro.cyclic.app/
 
-A simple web app with django (Task management app) => <a href="https://productive-pro.onrender.com/" target= "_blank">Live</a>
+A simple web app with django (Task management app) => <a href="https://productive-pro.cyclic.app/" target= "_blank">Live</a>
 
 ![Screenshot 2023-10-08 231005](https://github.com/nidhish17/Todo_web_app/assets/128178835/a22812ed-105b-46ec-b2cb-1df0d15dff7a)
 
@@ -27,5 +27,5 @@ A simple web app with django (Task management app) => <a href="https://productiv
 
 
 
-Checkout the app here --> <a href="https://productive-pro.onrender.com/" target= "_blank">Productive-PRO</a>
+Checkout the app here --> <a href="https://productive-pro.cyclic.app/" target= "_blank">Productive-PRO</a>
 
