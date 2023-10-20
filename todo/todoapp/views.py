@@ -25,15 +25,22 @@ def home_page(request):
 
     # sorted todo_data here the tasks that are done goes to the end of the list
     if request.user.is_authenticated:
+        user = User.objects.get(username= request.user)
         if request.user.is_superuser:
             # Superuser should only see their own tasks
-            todo_data = Todo.objects.filter(user=request.user).order_by("task_status", "start_date")
+            todo_data = user.tasks.all().order_by("task_status", "start_date")
         else:
             # Regular user sees only their own tasks
-            todo_data = Todo.objects.filter(user=request.user).order_by("task_status", "start_date")
+            todo_data = user.tasks.all().order_by("task_status", "start_date")
     else:
         # Non-authenticated user sees no tasks
         todo_data = []
+
+    # print(request.user)
+
+    # user = User.objects.get(username='nidhish')
+    # user_tasks = user.tasks.all()
+    # print(user_tasks, "printing the user's tasks")
 
 
 
@@ -200,14 +207,13 @@ def login_user(request):
         # print(form)
 
         if form.is_valid():
-            username = request.POST.get("username")
+            username = request.POST.get("username").lower()
             password = request.POST.get("password")
             user = authenticate(username= username, password=password)
 
             if user is not None:
                 auth.login(request, user)
                 return redirect("homepage")
-
 
     else:
         form = LoginForm()

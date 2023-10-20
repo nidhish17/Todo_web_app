@@ -46,8 +46,17 @@ class RegisterUserForm(UserCreationForm):
             "username": forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}),
         }
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username').lower()  # Convert the username to lowercase
+        return username
+
 
 class LoginForm(AuthenticationForm):
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        return username.lower()
+
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', "placeholder": "Username"}))
     # email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control', "placeholder": "Email"}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', "placeholder": "Password"}))
+
