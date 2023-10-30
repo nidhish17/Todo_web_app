@@ -27,7 +27,7 @@
             <br>
 
             {{ form.media }}
-            <form action="{% url 'add_tasks' %}?sort={{ request.GET.sort }}" method="post">
+            <form action="{% url 'add_tasks' %}?sort={{ request.GET.sort }}" class="add-todo-form" method="post">
                 {% csrf_token %}
 
 
@@ -57,11 +57,23 @@
                 <br>
 
                 <div class="d-grid card border-secondary">
-                    <button class="btn btn-dark" type="submit">Add TODO</button>
+                    <button class="btn btn-dark add-todo-btn" type="submit">Add TODO</button>
                 </div>
 
             </form>
         </div>
+
+        <script>
+            const todo_form = document.querySelector(".add-todo-form");
+            const add_todo_btn = document.querySelector(".add-todo-btn");
+            add_todo_btn.addEventListener("click", function (){
+                if (todo_form.checkValidity()){
+                    add_todo_btn.classList.add("disabled");
+                    add_todo_btn.innerHTML = "Add TODO <i class=\"fa-solid fa-spinner fa-spin-pulse\"></i>"
+                }
+            })
+        </script>
+
 
     </section>
 
@@ -78,7 +90,7 @@
                     <div class="input-group container">
                         {#                    <h3 class="random-quote form-control">some random quote here </h3>#}
                         {#                    <a class="btn btn-secondary fetch-quote" onclick="getapi(api_url)"><i class="bi bi-arrow-clockwise"></i></a>#}
-                        <input class="form-control me-2 search-bar" type="search" placeholder="Search By Title" aria-label="Search">
+                        <input class="form-control me-2 search-bar" type="search" placeholder="Search By Task Title" aria-label="Search">
                     </div>
 
 
@@ -288,11 +300,15 @@
             </div>
 
         </section>
+
     {% endif %}
 
-
+    {% if user.is_authenticated %}
     {% include "todo/sidebar.html" %}
+    {% endif %}
+
     <script src="{% static 'todo/main.js' %}"></script>
+
 
 
 

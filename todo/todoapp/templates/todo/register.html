@@ -7,72 +7,81 @@
 {% block content %}
 
 
-    {% if register_form.errors %}
-        <div class="alert alert-danger">
-            <ul>
-                {% for field_name, field_errors in register_form.errors.items %}
-                    {% for error in field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-
+{% if register_form.errors %}
+<div class="alert alert-danger">
+    <ul>
+        {% for field_name, field_errors in register_form.errors.items %}
+        {% for error in field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 
 
 {% include 'todo/header.html' %}
 
-    <div class="container mt-5">
-        <div class="justify-content-center row">
+<div class="container mt-5">
+    <div class="justify-content-center row">
 
-            <div class="container text-center"><h2>Register Form</h2></div>
+        <div class="container text-center"><h2>Register Form</h2></div>
 
-            <div class="col col-lg-6">
-                <form action="{% url 'register' %}" method="post">
-                    {% csrf_token %}
-                    <div class="card border-success m-2 p-5">
-                        <label for="{{ register_form.username.id }}"
-                               class="form-label">{{ register_form.username.label }}</label>
-                        <div class="card border-info">
-                            {{ register_form.username }}
-                        </div>
-                        <br>
-
-                        <label for="{{ register_form.email.id }}"
-                               class="form-label mt-3">{{ register_form.email.label }}</label>
-                        <div class="card border-info">
-                            {{ register_form.email }}
-                        </div>
-                        <br>
-
-                        <label for="{{ register_form.password1.id }}"
-                               class="form-label mt-3">Password</label>
-                        <div class="card border-info">
-                            {{ register_form.password1 }}
-                        </div>
-                        <br>
-
-                        <label for="{{ register_form.password2.id }}"
-                               class="form-label mt-3">Confirm Password</label>
-                        <div class="card border-info">
-                            {{ register_form.password2 }}
-                        </div>
-                        <br>
-
-                        <button class="btn btn-outline-warning mt-3" type="submit">Register</button>
-                        <a href="{% url 'login' %}" class="mt-3">Already have an account? Login</a>
+        <div class="col col-lg-6">
+            <form action="{% url 'register' %}" method="post" class="register-form">
+                {% csrf_token %}
+                <div class="card border-success m-2 p-5">
+                    <label for="{{ register_form.username.id }}"
+                           class="form-label">{{ register_form.username.label }}</label>
+                    <div class="card border-info">
+                        {{ register_form.username }}
                     </div>
+                    <br>
+
+                    <label for="{{ register_form.email.id }}"
+                           class="form-label mt-3">{{ register_form.email.label }}</label>
+                    <div class="card border-info">
+                        {{ register_form.email }}
+                    </div>
+                    <br>
+
+                    <label for="{{ register_form.password1.id }}"
+                           class="form-label mt-3">Password</label>
+                    <div class="card border-info">
+                        {{ register_form.password1 }}
+                    </div>
+                    <br>
+
+                    <label for="{{ register_form.password2.id }}"
+                           class="form-label mt-3">Confirm Password</label>
+                    <div class="card border-info">
+                        {{ register_form.password2 }}
+                    </div>
+                    <br>
+
+                    <button class="btn btn-outline-warning mt-3 register-btn" type="submit">Register</button>
+                    <a href="{% url 'login' %}" class="mt-3">Already have an account? Login</a>
+                </div>
 
 
-                </form>
-            </div>
+            </form>
         </div>
     </div>
+</div>
 
 
+<script>
+    const register_btn = document.querySelector(".register-btn");
+    const register_form = document.querySelector(".register-form");
 
-    <script src="{% static 'todo/main.js' %}"></script>
+    register_btn.addEventListener("click", function () {
+        if (register_form.checkValidity()) {
+            console.log("yep valid")
+            register_btn.innerHTML = "Register <i class=\"fa-solid fa-spinner fa-spin-pulse\"></i>"
+            register_btn.classList.add("disabled")
+        }
+    });
+</script>
 
 {% endblock %}
 

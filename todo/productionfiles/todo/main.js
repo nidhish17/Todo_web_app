@@ -196,6 +196,3 @@ searchBar.addEventListener("input", function (e){
 
 
 
-
-
-
