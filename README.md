@@ -25,6 +25,3 @@ A simple web app with django (Task management app) =>
 
 
 
-
-Checkout the app here --> <a href="https://productive-pro.cyclic.app/" target= "_blank">Productive-PRO</a>
-
